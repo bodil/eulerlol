@@ -3,10 +3,6 @@
   (:use euler.lib))
 
 (test/with-test
-  (def sqr #(* %1 %1))
-  (test/is (= 25 (sqr 5))))
-
-(test/with-test
   (defn sum-of-squares [ns]
     "Return the sum of the squares of all numbers in ns."
     (reduce + (map sqr ns)))

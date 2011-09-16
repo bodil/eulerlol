@@ -37,3 +37,7 @@
   (test/is (prime? 1327))
   (test/is (not (prime? 1337))))
 
+(test/with-test
+  (def sqr #(* %1 %1))
+  (test/is (= 25 (sqr 5))))
+
