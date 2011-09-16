@@ -1,5 +1,6 @@
 (ns euler.p4
-  (:require [clojure [test :as test]]))
+  (:require [clojure [test :as test]])
+  (:use euler.lib))
 
 (test/with-test
   (defn palindrome? [n]

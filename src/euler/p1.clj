@@ -1,4 +1,6 @@
-(ns euler.p1)
+(ns euler.p1
+  (:require [clojure [test :as test]])
+  (:use euler.lib))
 
 (defn euler-p1 []
-  (reduce + (filter #(or (= (rem %1 3) 0) (= (rem %1 5) 0)) (range 1000))))
+  (reduce + (filter #(divisible-by? %1 [3 5]) (range 1000))))
