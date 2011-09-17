@@ -31,9 +31,11 @@
           ;; Now that we know `factor` is a prime, we can eliminate
           ;; all multiples of it from `numbers`. We use the (range)
           ;; function to easily generate the set of multiples of
-          ;; `factor` where `factor` < `limit`. We also add `factor`
-          ;; to `primes`.
-          (recur (cons factor primes) (apply disj (cons numbers (range factor limit factor))))
+          ;; `factor` where `factor` < `limit`. Note that the range
+          ;; increment is 2 * `factor` instead of just `factor`, which
+          ;; enables us to skip the even multiples. Finally, we also
+          ;; add `factor` to `primes`.
+          (recur (cons factor primes) (apply disj (cons numbers (range factor limit (+ factor factor)))))
           ;; When the iteration is done, the union of `primes` and
           ;; `numbers` will be the set of primes less than `limit`.
           (apply conj (cons numbers primes))))
