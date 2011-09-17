@@ -3,33 +3,43 @@
   (:use euler.lib))
 
 (test/with-test
-  (defn true-false-seq [bool]
-    "An endless sequence of alternating booleans."
-    (lazy-seq
-     (cons bool (true-false-seq (not bool)))))
-  (test/is (= [true false true false true] (take 5 (true-false-seq true))))
-  (test/is (= [false true false true false] (take 5 (true-false-seq false)))))
-
-(test/with-test
-  (defn primes-below [limit]
+  (defn primes-below
     "Find all primes below limit, which must be > 3."
-    ;; Ugly code is ugly because of the Java boolean-array.
-    ;; Make this more functional pls?
-    (let [sieve (boolean-array (inc limit) (true-false-seq true))
-          crosslimit (Math/sqrt limit)]
-      (aset sieve 2 false)
-      (loop [n 3]
-        (when (<= n crosslimit)
-          (when (not (aget sieve n))
-            (loop [m (sqr n)]
-              (when (<= m limit)
-                (aset sieve m true)
-                (recur (+ m (* 2 n))))))
-          (recur (+ n 2))))
-      (cons 2 (for [n (range 3 limit 2) :when (not (aget sieve n))] n))))
-  (test/is (= [2 3 5 7 11 13] (primes-below 15))))
+    [limit]
+    (loop
+        ;; `primes` is a list that will be populated with the primes
+        ;; we find during the iteration. We pre-initialise it with the
+        ;; number 2, the only prime we never iterate over because we
+        ;; skip odd numbers for efficiency.
+        [primes '(2)
+         ;; `numbers` is the set of numbers we're going to iterate
+         ;; over, and the sieve will eliminate numbers from this set
+         ;; as we iterate.
+         ;;
+         ;; We initialise `numbers` with the set of odd numbers from 3
+         ;; to limit. We skip even numbers, because we already know
+         ;; they're not primes.
+         numbers (apply sorted-set (range 3 limit 2))]
+      ;; The first number in `numbers` will be a prime.
+      (let [factor (first numbers)]
+        ;; We loop until `numbers` becomes empty, or until `factor`²
+        ;; exceeds `limit`. Once we have iterated over all primes
+        ;; smaller than the square root of `limit`, further iteration
+        ;; is not helpful, because we'll have eliminated all further
+        ;; non-primes in the set already.
+        (if (and (seq numbers) (> limit (sqr factor)))
+          ;; Now that we know `factor` is a prime, we can eliminate
+          ;; all multiples of it from `numbers`. We use the (range)
+          ;; function to easily generate the set of multiples of
+          ;; `factor` where `factor` < `limit`. We also add `factor`
+          ;; to `primes`.
+          (recur (cons factor primes) (apply disj (cons numbers (range factor limit factor))))
+          ;; When the iteration is done, the union of `primes` and
+          ;; `numbers` will be the set of primes less than `limit`.
+          (apply conj (cons numbers primes))))
+      ))
+  (test/is (= #{2 3 5 7 11 13 17 19 23 29 31 37 41 43 47} (primes-below 50))))
 
-;; Still takes ~15 secs to run.
 (defn euler-p10 []
   (reduce + (primes-below 2000000)))
 
