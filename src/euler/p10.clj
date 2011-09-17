@@ -10,7 +10,7 @@
         ;; `primes` is a list that will be populated with the primes
         ;; we find during the iteration. We pre-initialise it with the
         ;; number 2, the only prime we never iterate over because we
-        ;; skip odd numbers for efficiency.
+        ;; skip even numbers for efficiency.
         [primes '(2)
          ;; `numbers` is the set of numbers we're going to iterate
          ;; over, and the sieve will eliminate numbers from this set
